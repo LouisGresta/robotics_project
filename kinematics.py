@@ -1,6 +1,6 @@
 from math import cos, sin, pi, radians, degrees, acos, atan2, sqrt
-from utils.constants import *
-from utils.verbose_func import printVerbose
+from constants import *
+from utils import printVerbose
 
 def computeDK(theta1, theta2, theta3, l1=constL1, l2=constL2, l3=constL3, use_rads=True):
     if not use_rads :
