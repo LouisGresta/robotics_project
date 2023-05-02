@@ -1,0 +1,266 @@
+{
+    "controllers": {
+        "dxl_controller_0": {
+            "attached_motors": [
+                "motor_11",
+                "motor_12",
+                "motor_13",
+                "motor_21",
+                "motor_22",
+                "motor_23",
+                "motor_31",
+                "motor_32",
+                "motor_33",
+                "motor_41",
+                "motor_42",
+                "motor_43",
+                "motor_51",
+                "motor_52",
+                "motor_53",
+                "motor_61",
+                "motor_62",
+                "motor_63"
+            ],
+            "port": "auto",
+            "sync_read": false
+        }
+    },
+    "motorgroups": {
+        "elbows": [
+            "motor_12",
+            "motor_22",
+            "motor_32",
+            "motor_42",
+            "motor_52",
+            "motor_62"
+        ],
+        "leg1": [
+            "motor_11",
+            "motor_12",
+            "motor_13"
+        ],
+        "leg2": [
+            "motor_21",
+            "motor_22",
+            "motor_23"
+        ],
+        "leg3": [
+            "motor_31",
+            "motor_32",
+            "motor_33"
+        ],
+        "leg4": [
+            "motor_41",
+            "motor_42",
+            "motor_43"
+        ],
+        "leg5": [
+            "motor_51",
+            "motor_52",
+            "motor_53"
+        ],
+        "leg6": [
+            "motor_61",
+            "motor_62",
+            "motor_63"
+        ],
+        "shoulders": [
+            "motor_11",
+            "motor_21",
+            "motor_31",
+            "motor_41",
+            "motor_51",
+            "motor_61"
+        ],
+        "wraists": [
+            "motor_13",
+            "motor_23",
+            "motor_33",
+            "motor_43",
+            "motor_53",
+            "motor_63"
+        ]
+    },
+    "motors": {
+        "motor_11": {
+            "angle_limit": [
+                -101.0,
+                101.0
+            ],
+            "id": 11,
+            "offset": 0.0,
+            "orientation": "direct",
+            "type": "AX-12"
+        },
+        "motor_12": {
+            "angle_limit": [
+                -89.0,
+                101.0
+            ],
+            "id": 12,
+            "offset": 0.0,
+            "orientation": "direct",
+            "type": "AX-12"
+        },
+        "motor_13": {
+            "angle_limit": [
+                -80.0,
+                150.0
+            ],
+            "id": 13,
+            "offset": 0.0,
+            "orientation": "direct",
+            "type": "AX-12"
+        },
+        "motor_21": {
+            "angle_limit": [
+                -100,
+                0
+            ],
+            "id": 21,
+            "offset": 0.0,
+            "orientation": "direct",
+            "type": "AX-12"
+        },
+        "motor_22": {
+            "angle_limit": [
+                -89.0,
+                101.0
+            ],
+            "id": 22,
+            "offset": 0.0,
+            "orientation": "direct",
+            "type": "AX-12"
+        },
+        "motor_23": {
+            "angle_limit": [
+                -80,
+                150
+            ],
+            "id": 23,
+            "offset": 0.0,
+            "orientation": "direct",
+            "type": "AX-12"
+        },
+        "motor_31": {
+            "angle_limit": [
+                0,
+                100
+            ],
+            "id": 31,
+            "offset": 0.0,
+            "orientation": "direct",
+            "type": "AX-12"
+        },
+        "motor_32": {
+            "angle_limit": [
+                -89.0,
+                101.0
+            ],
+            "id": 32,
+            "offset": 0.0,
+            "orientation": "direct",
+            "type": "AX-12"
+        },
+        "motor_33": {
+            "angle_limit": [
+                -80,
+                150
+            ],
+            "id": 33,
+            "offset": 0.0,
+            "orientation": "direct",
+            "type": "AX-12"
+        },
+        "motor_41": {
+            "angle_limit": [
+                -101,
+                101
+            ],
+            "id": 41,
+            "offset": 0.0,
+            "orientation": "direct",
+            "type": "AX-12"
+        },
+        "motor_42": {
+            "angle_limit": [
+                -89.0,
+                101.0
+            ],
+            "id": 42,
+            "offset": 0.0,
+            "orientation": "direct",
+            "type": "AX-12"
+        },
+        "motor_43": {
+            "angle_limit": [
+                -80,
+                150
+            ],
+            "id": 43,
+            "offset": 0.0,
+            "orientation": "direct",
+            "type": "AX-12"
+        },
+        "motor_51": {
+            "angle_limit": [
+                -100,
+                0
+            ],
+            "id": 51,
+            "offset": 0.0,
+            "orientation": "direct",
+            "type": "AX-12"
+        },
+        "motor_52": {
+            "angle_limit": [
+                -89.0,
+                101.0
+            ],
+            "id": 52,
+            "offset": 0.0,
+            "orientation": "direct",
+            "type": "AX-12"
+        },
+        "motor_53": {
+            "angle_limit": [
+                -80,
+                150
+            ],
+            "id": 53,
+            "offset": 0.0,
+            "orientation": "direct",
+            "type": "AX-12"
+        },
+        "motor_61": {
+            "angle_limit": [
+                0,
+                100
+            ],
+            "id": 61,
+            "offset": 0.0,
+            "orientation": "direct",
+            "type": "AX-12"
+        },
+        "motor_62": {
+            "angle_limit": [
+                -89.0,
+                101.0
+            ],
+            "id": 62,
+            "offset": 0.0,
+            "orientation": "direct",
+            "type": "AX-12"
+        },
+        "motor_63": {
+            "angle_limit": [
+                -80,
+                150
+            ],
+            "id": 63,
+            "offset": 0.0,
+            "orientation": "direct",
+            "type": "AX-12"
+        }
+    }
+}
