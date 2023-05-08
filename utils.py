@@ -1,4 +1,4 @@
-from kinematics import computeIKOriented, computeIK, computeDKDetailed, computeDK, rotaton_2D
+from kinematics import computeIKOriented, computeIK, computeDKDetailed, computeDK, rotation_2D
 from constants import *
 import time
 
@@ -443,13 +443,13 @@ class SimpleRobotSimulation:
                 motors[2].present_position,
                 use_rads=True,
             )
-            pos = rotaton_2D(
+            pos = rotation_2D(
                 pos[0],
                 pos[1],
                 pos[2],
                 self.params.legAngles[i] + yaw,
             )
-            leg_center_position = rotaton_2D(
+            leg_center_position = rotation_2D(
                 LEG_CENTER_POS[i][0],
                 LEG_CENTER_POS[i][1],
                 LEG_CENTER_POS[i][2],

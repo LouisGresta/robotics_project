@@ -1,6 +1,5 @@
 from math import cos, sin, pi, radians, degrees, acos, atan2, sqrt
 from constants import *
-from utils import printVerbose
 
 def computeDK(theta1, theta2, theta3, l1=constL1, l2=constL2, l3=constL3, use_rads=True):
     if not use_rads :
@@ -66,11 +65,12 @@ def computeDKSimple(theta1, theta2, theta3, l1=constL1, l2=constL2, l3=constL3, 
 
     return [x, y, z]
 
-def computeIK(x, y, z, l1=constL1, l2=constL2, l3=constL3, use_rads=True):
+def computeIK(x, y, z, l1=constL1, l2=constL2, l3=constL3, use_rads=True, VERBOSE=False):
     z *= Z_DIRECTION 
-    printVerbose("[x = {:.2f}, y = {:.2f}, z = {:.2f}]".format(x, y, z))
-    if sqrt(x**2 + y**2 + z**2) > l1+l2+l3:
-        printVerbose("point impossible à atteindre")
+    if VERBOSE:
+        print("[x = {:.2f}, y = {:.2f}, z = {:.2f}]".format(x, y, z))
+    if VERBOSE and sqrt(x**2 + y**2 + z**2) > l1+l2+l3:
+        print("point impossible à atteindre")
     d = sqrt(z**2 + (sqrt(x**2+y**2)-l1)**2)
     theta1 = atan2(y, x)
     if (-l3**2 + l2**2 + d**2)/(2*l2*d) > 1 : 
@@ -120,7 +120,7 @@ def circle(x, z, r, t, duration):
 
     return computeIK(x, y, z)
 
-def triangle(x, z, h, w, t, duration = 3, leg_index=True):
+def triangle(x, z, h, w, t, duration = 3, leg_index=True, VERBOSE=False):
     # x, z : position du centre du segment de la hauteur du triangle
     # (centre du triangle)
     # h : hauteur du triangle
@@ -133,27 +133,25 @@ def triangle(x, z, h, w, t, duration = 3, leg_index=True):
     duration_hyp = (dist_cote/perimetre)*duration
     t %= duration
     pt_a, pt_b, pt_c = triangle_points(x, z, h, w)
-
+    if VERBOSE :
+        print("points : a= {}, b= {}, c= {}".format(pt_a, pt_b, pt_c))
     if t < duration_width :
-        printVerbose("segment bas")
         return segment(pt_a[0], pt_a[1], pt_a[2],
                 pt_c[0], pt_c[1], pt_c[2],
                 t, duration_width, 
                 leg_index)
     elif t < (duration_width + duration_hyp) :
-        printVerbose("segment droite")
         return segment(pt_c[0], pt_c[1], pt_c[2],
                 pt_b[0], pt_b[1], pt_b[2],
                 t-duration_width, duration_hyp, 
                 leg_index)
     else :
-        printVerbose("segment gauche")
         return segment(pt_b[0], pt_b[1], pt_b[2],
                 pt_a[0], pt_a[1], pt_a[2],
                 t-(duration_width+duration_hyp), duration_hyp, 
                 leg_index)
 
-def triangle_synchro(x, z, h, w, t, duration = 3, leg_index=True, theta_add=0):
+def triangle_synchro(x, z, h, w, t, duration = 3, leg_index=True, theta_add=0, VERBOSE=False):
     # x, z : position du centre du segment de la hauteur du triangle
     # (centre du triangle)
     # h : hauteur du triangle
@@ -164,21 +162,19 @@ def triangle_synchro(x, z, h, w, t, duration = 3, leg_index=True, theta_add=0):
     duration_width = duration/2
     t %= duration
     pt_a, pt_b, pt_c = triangle_points(x, z, h, w)
-
+    if VERBOSE :
+        print("points : a= {}, b= {}, c= {}".format(pt_a, pt_b, pt_c))
     if t < duration_width :
-        printVerbose("segment bas")
         return segment(pt_a[0], pt_a[1], pt_a[2],
                 pt_c[0], pt_c[1], pt_c[2],
                 t, duration_width, 
                 leg_index, theta_add)
     elif t < (duration_width + duration_hyp) :
-        printVerbose("segment droite")
         return segment(pt_c[0], pt_c[1], pt_c[2],
                 pt_b[0], pt_b[1], pt_b[2],
                 t-duration_width, duration_hyp, 
                 leg_index, theta_add)
     else :
-        printVerbose("segment gauche")
         return segment(pt_b[0], pt_b[1], pt_b[2],
                 pt_a[0], pt_a[1], pt_a[2],
                 t-(duration_width+duration_hyp), duration_hyp, 
