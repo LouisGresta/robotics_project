@@ -1,14 +1,13 @@
 import tkinter.ttk as ttk
 import tkinter
 import queue
-import sys
 import math
 transfer_queue = queue.Queue(1) # max_size=1, we pass data one by one
 
 message = {
     'mode':'direct',
-    'start': False,
-    'data': []
+    'loop': False,
+    'data': {}
            }
 transfer_queue.put(message)
 
@@ -127,6 +126,7 @@ class App(ttk.Frame):
         startStopTriangleButton.grid(row=3, column=2, columnspan=5, pady=20)
 
     def walkFrameInit(self):
+        # Init
         self.walkFrame = ttk.Frame(self.notebook, padding=(0,20,0,0))
 
         nordButton = ttk.Button(self.walkFrame, text="↑")
@@ -139,15 +139,12 @@ class App(ttk.Frame):
         nordWestButton = ttk.Button(self.walkFrame, text="↖")
 
         minusPiLabel = ttk.Label(self.walkFrame, text="-π")
-        directionScale = ttk.Scale(self.walkFrame, orient="horizontal", length=200, from_=-math.pi, to=math.pi)
+        directionScale = ttk.Scale(self.walkFrame, orient="horizontal", length=200, from_=-math.pi, to=math.pi, value=0)
         piLabel = ttk.Label(self.walkFrame, text="π")
 
-        useArrows = tkinter.BooleanVar(self.walkFrame, value=None)
-        arrowsRadioButton = ttk.Radiobutton(self.walkFrame, text="Use It", variable=useArrows, value=True)
-        scaleRadioButton = ttk.Radiobutton(self.walkFrame, text="Use It", variable=useArrows, value=False)
-        
         startStopWalkButton = ttk.Button(self.walkFrame, text="Start/Stop")
 
+        # Position
         nordButton.grid(row=0,column=2)
         nordEastButton.grid(row=1, column=3)
         eastButton.grid(row=2, column=4)
@@ -163,11 +160,26 @@ class App(ttk.Frame):
         directionScale.grid(row=0, column=7, rowspan=5)
         piLabel.grid(row=0, column=8, rowspan=5)
 
-        arrowsRadioButton.grid(row=5, column=0, columnspan=5, pady=10)
-        scaleRadioButton.grid(row=5, column=7, columnspan=5, pady=10)
-
         startStopWalkButton.grid(row=6, column=1, columnspan=10, pady=20)
 
-    def on_click(self):
+        # Bind
+        startStopWalkButton.configure(command=self.toggleLoop)
+        nordButton.configure(command=lambda : self.walkDirection(0))
+        nordEastButton.configure(command=lambda : self.walkDirection(-math.pi/4))
+        eastButton.configure(command=lambda : self.walkDirection(-math.pi/2))
+        southEastButton.configure(command=lambda : self.walkDirection(-3*math.pi/4))
+        southButton.configure(command=lambda : self.walkDirection(math.pi))
+        southWestButton.configure(command=lambda : self.walkDirection(3*math.pi/4))
+        westButton.configure(command=lambda : self.walkDirection(math.pi/2))
+        nordWestButton.configure(command=lambda : self.walkDirection(math.pi/4))
+        directionScale.configure(command=self.walkDirection)
+
+    def toggleLoop(self):
+        if message["loop"]:
+            message["loop"] = False
+        else:
+            message["loop"] = True
         transfer_queue.put(message)
 
+    def walkDirection(self, dir):
+        message["data"]["direction"] = dir

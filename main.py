@@ -1,16 +1,21 @@
 from app import App, transfer_queue
 import threading
 import time
-import sys 
+
+start_time = time.time_ns()
 
 def robot_exec():
+    message = transfer_queue.get()
     while True:
-        message = transfer_queue.get()
-        if message is None:
-            print("thread_target: got None, exiting...")
-            return
+        if not message["loop"]:
+            print("wait until loop starts")
+            message = transfer_queue.get()
+        current_time = time.time_ns() - start_time
 
-        print("thread_target: doing something with", message, "...")
+        if message is None:
+            print("got None, exiting...")
+            return
+        print("doing something with", message)
 
 
 # create the application
