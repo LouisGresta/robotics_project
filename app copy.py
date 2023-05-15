@@ -2,10 +2,6 @@ import tkinter.ttk as ttk
 import tkinter
 import queue
 import math
-import time
-
-from kinematics import *
-
 transfer_queue = queue.Queue(1) # max_size=1, we pass data one by one
 
 message = {
@@ -21,10 +17,8 @@ class App(ttk.Frame):
 
         self.legs = ['Leg_1', 'Leg_2', 'Leg_3',
                      'Leg_4', 'Leg_5', 'Leg_6']
-        self.legsVar = tkinter.StringVar(values=self.legs)
+        self.legsVar = tkinter.StringVar(value=self.legs)
         self.pack()
-
-        self.start_time = time.time_ns()
 
         self.notebook = ttk.Notebook(self)
 
@@ -82,9 +76,9 @@ class App(ttk.Frame):
         motor3Scale.grid(row=2, column=2)
 
         # Bind
-        motor1Scale.configure(command=lambda newvalues : self.directMotor(newvalues, 1))
-        motor2Scale.configure(command=lambda newvalues : self.directMotor(newvalues, 2))
-        motor3Scale.configure(command=lambda newvalues : self.directMotor(newvalues, 3))
+        motor1Scale.configure(command=lambda newValue : self.directMotor(newValue, 1))
+        motor2Scale.configure(command=lambda newValue : self.directMotor(newValue, 2))
+        motor3Scale.configure(command=lambda newValue : self.directMotor(newValue, 3))
 
     def inverseFrameInit(self):
         self.inverseFrame = ttk.Frame(self.notebook, padding=(0,20,0,0))
@@ -109,9 +103,9 @@ class App(ttk.Frame):
         zInverseScale.grid(row=2, column=2)
 
         # Bind
-        xInverseScale.configure(command=lambda newvalues : self.inverseCoords(newvalues, "x"))
-        yInverseScale.configure(command=lambda newvalues : self.inverseCoords(newvalues, "y"))
-        zInverseScale.configure(command=lambda newvalues : self.inverseCoords(newvalues, "z"))
+        xInverseScale.configure(command=lambda newValue : self.inverseCoords(newValue, "x"))
+        yInverseScale.configure(command=lambda newValue : self.inverseCoords(newValue, "y"))
+        zInverseScale.configure(command=lambda newValue : self.inverseCoords(newValue, "z"))
 
     def triangleFrameInit(self):
         self.triangleFrame = ttk.Frame(self.notebook, padding=(0,20,0,0))
@@ -145,10 +139,10 @@ class App(ttk.Frame):
 
         # Bind
         startStopTriangleButton.configure(command=self.toggleLoop)
-        xTriangleScale.configure(command=lambda newvalues : self.triangleParams(newvalues, "x"))
-        zTriangleScale.configure(command=lambda newvalues : self.triangleParams(newvalues, "z"))
-        widthTriangleScale.configure(command=lambda newvalues : self.triangleParams(newvalues, "width"))
-        heightTriangleScale.configure(command=lambda newvalues : self.triangleParams(newvalues, "height"))
+        xTriangleScale.configure(command=lambda newValue : self.triangleParams(newValue, "x"))
+        zTriangleScale.configure(command=lambda newValue : self.triangleParams(newValue, "z"))
+        widthTriangleScale.configure(command=lambda newValue : self.triangleParams(newValue, "width"))
+        heightTriangleScale.configure(command=lambda newValue : self.triangleParams(newValue, "height"))
 
     def walkFrameInit(self):
         # Init
@@ -164,7 +158,7 @@ class App(ttk.Frame):
         nordWestButton = ttk.Button(self.walkFrame, text="↖")
 
         minusPiLabel = ttk.Label(self.walkFrame, text="-π")
-        directionScale = ttk.Scale(self.walkFrame, orient="horizontal", length=200, from_=-math.pi, to=math.pi, values=0)
+        directionScale = ttk.Scale(self.walkFrame, orient="horizontal", length=200, from_=-math.pi, to=math.pi, value=0)
         piLabel = ttk.Label(self.walkFrame, text="π")
 
         startStopWalkButton = ttk.Button(self.walkFrame, text="Start/Stop")
@@ -210,50 +204,36 @@ class App(ttk.Frame):
         message["mode"] = "walk"
         message["data"]["direction"] = dir
 
-
-    def writeMessage(self, theta, motor, leg_indexes, mode, loop=False):
+    def directMotor(self, value, motor):
+        leg_indexes = self.armlistDirect.curselection()
         legs = []
         for i in leg_indexes:
             legs.append(self.legs[i])
-        message["data"]["motor{}".format(motor)] = theta
+        message["mode"] = "direct"
+        message["data"]["motor{}".format(motor)] = value
         message["data"]["legs"] = legs
-        message["mode"] = mode
-        message["loop"] = loop
-
-
-    # Direct kinematic movement for one motor
-    def directMotor(self, value, motor):
-        leg_indexes = self.armlistDirect.curselection()
-
-        theta = value
-
-        self.writeMessage(theta, motor, leg_indexes, mode="Direct")
-
+        message["loop"] = False
         transfer_queue.put(message)
     
-
-    # Inverse kinematic movement
-    def inverseCoords(self, values):
+    def inverseCoords(self, value, coord):
         leg_indexes = self.armlistInverse.curselection()
+        legs = []
+        for i in leg_indexes:
+            legs.append(self.legs[i])
+        message["mode"] = "inverse"
+        message["data"][coord] = value
+        message["data"]["legs"] = legs
+        message["loop"] = False
+        transfer_queue.put(message)
 
-        thetas = computeIK(values[0], values[1], values[2])
-
-        for i in range(3):
-            self.writeMessage(thetas[i], i, leg_indexes, mode="Inverse")
-            transfer_queue.put(message)
-
-
-
-    def triangleParams(self, values):
-        leg_indexes = self.armlistInverse.curselection()
-
-        thetas = triangle(values[0], values[1], values[2],
-                          self.start_time - time.time_ns())
-
-        for i in range(3):
-            self.writeMessage(thetas[i], i, leg_indexes, mode="Triangle", loop=True)
-            transfer_queue.put(message)
-
+    def triangleParams(self, value, param):
+        leg_indexes = self.armlistTriangle.curselection()
+        legs = []
+        for i in leg_indexes:
+            legs.append(self.legs[i])
+        message["mode"] = "triangle"
+        message["data"][param] = value
+        message["data"]["legs"] = legs
 
     def emptyMessage(self, event):
         print("tab changed")
