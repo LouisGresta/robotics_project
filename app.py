@@ -215,8 +215,8 @@ class App(ttk.Frame):
         legs = []
         for i in leg_indexes:
             legs.append(self.legs[i])
-        message["data"]["motor{}".format(motor)] = theta
-        message["data"]["legs"] = legs
+        message["motors"]["motor{}".format(motor)] = theta
+        message["legs"] = legs
         message["mode"] = mode
         message["loop"] = loop
 

@@ -5,26 +5,33 @@ import time
 start_time = time.time_ns()
 
 
-def verificationMessage(message):
-        data = message["data"]
+dictLegs = {
+    'Leg_1':1,
+    'Leg_2':2,
+    'Leg_3':3,
+    'Leg_4':4,
+    'Leg_5':5,
+    'Leg_6':6
+}
 
-        if( len(data) == 0 ):
-            print("Aucune donnée dans data")
+
+
+def verificationMessage(message):
+        if( len(message["motors"]) == 0):
+            print("Aucun moteur renseigné")
             return -1
         
-        if( len(data["legs"]) == len(data)):
-            print("Aucun moteur renseigné")
-            return -2
-        
-        if( len(data["legs"]) == 0):
+        if( len(message["legs"]) == 0):
             print("Aucune patte renseignée")
-            return -3
+            return -2
         
         return 0
 
 
+
 def robot_exec():
     message = transfer_queue.get()
+
     while True:
         if not message["loop"]:
             print("wait until loop starts")
@@ -37,9 +44,10 @@ def robot_exec():
         print("doing something with", message)
 
         if( not verificationMessage(message) ):
-             print("Movement robot")
+            print("Movement robot")
 
-
+            for legs in dictLegs:
+                pass
 
 
 
