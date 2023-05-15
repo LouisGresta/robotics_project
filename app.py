@@ -4,11 +4,7 @@ import queue
 import math
 transfer_queue = queue.Queue(1) # max_size=1, we pass data one by one
 
-message = {
-    'mode':'direct',
-    'loop': False,
-    'data': {}
-           }
+message = {}
 transfer_queue.put(message)
 
 class App(ttk.Frame):
@@ -234,7 +230,6 @@ class App(ttk.Frame):
         print("tab changed")
         selectedTab = self.notebook.select()
         print(selectedTab)
-        message = {}
         message["loop"] = False
         if selectedTab == ".!app.!notebook.!frame":
             message["mode"] = "direct"
