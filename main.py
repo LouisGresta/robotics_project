@@ -1,8 +1,27 @@
 from app import App, transfer_queue
 import threading
 import time
-from utils import readMessage
+#from utils import readMessage
 start_time = time.time_ns()
+
+
+def verificationMessage(message):
+        data = message["data"]
+
+        if( len(data) == 0 ):
+            print("Aucune donnée dans data")
+            return -1
+        
+        if( len(data["legs"]) == len(data)):
+            print("Aucun moteur renseigné")
+            return -2
+        
+        if( len(data["legs"]) == 0):
+            print("Aucune patte renseignée")
+            return -3
+        
+        return 0
+
 
 def robot_exec():
     message = transfer_queue.get()
@@ -17,11 +36,17 @@ def robot_exec():
             return
         print("doing something with", message)
 
+        if( not verificationMessage(message) ):
+             print("Movement robot")
+
+
+
+
 
 # create the application
 app = App()
 
-# method calls to the window manager class
+# method calls to the window manager class<
 app.master.title("Hexapod")
 app.master.maxsize(1000, 400)
 

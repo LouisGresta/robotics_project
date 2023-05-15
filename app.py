@@ -21,7 +21,7 @@ class App(ttk.Frame):
 
         self.legs = ['Leg_1', 'Leg_2', 'Leg_3',
                      'Leg_4', 'Leg_5', 'Leg_6']
-        self.legsVar = tkinter.StringVar(values=self.legs)
+        self.legsVar = tkinter.StringVar(value=self.legs)
         self.pack()
 
         self.start_time = time.time_ns()
@@ -82,9 +82,9 @@ class App(ttk.Frame):
         motor3Scale.grid(row=2, column=2)
 
         # Bind
-        motor1Scale.configure(command=lambda newvalues : self.directMotor(newvalues, 1))
-        motor2Scale.configure(command=lambda newvalues : self.directMotor(newvalues, 2))
-        motor3Scale.configure(command=lambda newvalues : self.directMotor(newvalues, 3))
+        motor1Scale.configure(command=lambda newvalue : self.directMotor(newvalue, 1))
+        motor2Scale.configure(command=lambda newvalue : self.directMotor(newvalue, 2))
+        motor3Scale.configure(command=lambda newvalue : self.directMotor(newvalue, 3))
 
     def inverseFrameInit(self):
         self.inverseFrame = ttk.Frame(self.notebook, padding=(0,20,0,0))
@@ -109,9 +109,9 @@ class App(ttk.Frame):
         zInverseScale.grid(row=2, column=2)
 
         # Bind
-        xInverseScale.configure(command=lambda newvalues : self.inverseCoords(newvalues, "x"))
-        yInverseScale.configure(command=lambda newvalues : self.inverseCoords(newvalues, "y"))
-        zInverseScale.configure(command=lambda newvalues : self.inverseCoords(newvalues, "z"))
+        xInverseScale.configure(command=lambda newvalue : self.inverseCoords(newvalue, "x"))
+        yInverseScale.configure(command=lambda newvalue : self.inverseCoords(newvalue, "y"))
+        zInverseScale.configure(command=lambda newvalue : self.inverseCoords(newvalue, "z"))
 
     def triangleFrameInit(self):
         self.triangleFrame = ttk.Frame(self.notebook, padding=(0,20,0,0))
@@ -145,10 +145,10 @@ class App(ttk.Frame):
 
         # Bind
         startStopTriangleButton.configure(command=self.toggleLoop)
-        xTriangleScale.configure(command=lambda newvalues : self.triangleParams(newvalues, "x"))
-        zTriangleScale.configure(command=lambda newvalues : self.triangleParams(newvalues, "z"))
-        widthTriangleScale.configure(command=lambda newvalues : self.triangleParams(newvalues, "width"))
-        heightTriangleScale.configure(command=lambda newvalues : self.triangleParams(newvalues, "height"))
+        xTriangleScale.configure(command=lambda newvalue : self.triangleParams(newvalue, "x"))
+        zTriangleScale.configure(command=lambda newvalue : self.triangleParams(newvalue, "z"))
+        widthTriangleScale.configure(command=lambda newvalue : self.triangleParams(newvalue, "width"))
+        heightTriangleScale.configure(command=lambda newvalue : self.triangleParams(newvalue, "height"))
 
     def walkFrameInit(self):
         # Init
@@ -164,7 +164,7 @@ class App(ttk.Frame):
         nordWestButton = ttk.Button(self.walkFrame, text="↖")
 
         minusPiLabel = ttk.Label(self.walkFrame, text="-π")
-        directionScale = ttk.Scale(self.walkFrame, orient="horizontal", length=200, from_=-math.pi, to=math.pi, values=0)
+        directionScale = ttk.Scale(self.walkFrame, orient="horizontal", length=200, from_=-math.pi, to=math.pi, value=0)
         piLabel = ttk.Label(self.walkFrame, text="π")
 
         startStopWalkButton = ttk.Button(self.walkFrame, text="Start/Stop")
@@ -233,10 +233,10 @@ class App(ttk.Frame):
     
 
     # Inverse kinematic movement
-    def inverseCoords(self, values):
+    def inverseCoords(self, value):
         leg_indexes = self.armlistInverse.curselection()
 
-        thetas = computeIK(values[0], values[1], values[2])
+        thetas = computeIK(value[0], value[1], value[2])
 
         for i in range(3):
             self.writeMessage(thetas[i], i, leg_indexes, mode="Inverse")
@@ -244,10 +244,10 @@ class App(ttk.Frame):
 
 
 
-    def triangleParams(self, values):
+    def triangleParams(self, value):
         leg_indexes = self.armlistInverse.curselection()
 
-        thetas = triangle(values[0], values[1], values[2],
+        thetas = triangle(value[0], value[1], value[2],
                           self.start_time - time.time_ns())
 
         for i in range(3):
