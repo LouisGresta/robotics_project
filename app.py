@@ -57,7 +57,7 @@ class App(ttk.Frame):
         
         self.notebook.pack()
 
-        self.notebook.bind("<<NotebookTabChanged>>", self.emptyMessage)
+        self.notebook.bind("<<NotebookTabChanged>>", self.initMessage)
 
     def directFrameInit(self):
         self.directFrame = ttk.Frame(self.notebook, padding=(0,20,0,0))
@@ -255,8 +255,25 @@ class App(ttk.Frame):
             transfer_queue.put(message)
 
 
-    def emptyMessage(self, event):
+    def initMessage(self, event):
         print("tab changed")
-        message["mode"] = "empty"
+        selectedTab = self.notebook.select()
+        print(selectedTab)
+        message = {}
         message["loop"] = False
-        message["data"] = {}
+        if selectedTab == ".!app.!notebook.!frame":
+            message["mode"] = "direct"
+            message["motors"] = {'motor1': 0, 'motor2': 0, 'motor3': 0}
+            message["legs"] = [] 
+        elif selectedTab == ".!app.!notebook.!frame2":
+            message["mode"] = "inverse"
+            message["coords"] = {'x': 0, 'y': 0, 'z': 0}
+            message["legs"] = [] 
+        elif selectedTab == ".!app.!notebook.!frame3":
+            message["mode"] = "triangle"
+            message["params"] = {'x': 0, 'z': 0, 'width': 0, 'height': 0}
+            message["legs"] = [] 
+        elif selectedTab == ".!app.!notebook.!frame4":
+            message["mode"] = "walk"
+            message["direction"] = 0
+        print(message)
