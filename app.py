@@ -15,9 +15,9 @@ class App(ttk.Frame):
     def __init__(self, master=None):
         super().__init__(master)
 
-        legs = ['Leg_1', 'Leg_2', 'Leg_3',
+        self.legs = ['Leg_1', 'Leg_2', 'Leg_3',
                      'Leg_4', 'Leg_5', 'Leg_6']
-        self.legsVar = tkinter.StringVar(value=legs)
+        self.legsVar = tkinter.StringVar(value=self.legs)
         self.pack()
 
         self.notebook = ttk.Notebook(self)
@@ -51,9 +51,11 @@ class App(ttk.Frame):
         
         self.notebook.pack()
 
+        self.notebook.bind("<<NotebookTabChanged>>", self.emptyMessage)
+
     def directFrameInit(self):
         self.directFrame = ttk.Frame(self.notebook, padding=(0,20,0,0))
-        armlistDirect = tkinter.Listbox(self.directFrame, height=6, listvariable=self.legsVar)
+        self.armlistDirect = tkinter.Listbox(self.directFrame, height=6, listvariable=self.legsVar, selectmode="extended")
 
         motor1Label = ttk.Label(self.directFrame, text="Motor 1 :")
         motor2Label = ttk.Label(self.directFrame, text="Motor 2 :")
@@ -63,7 +65,7 @@ class App(ttk.Frame):
         motor2Scale = ttk.Scale(self.directFrame, orient="horizontal", length=300, from_=1.0, to=100.0)
         motor3Scale = ttk.Scale(self.directFrame, orient="horizontal", length=300, from_=1.0, to=100.0)
 
-        armlistDirect.grid(row=0, column=0, rowspan=3, padx=(0, 10))
+        self.armlistDirect.grid(row=0, column=0, rowspan=3, padx=(0, 10))
 
         motor1Label.grid(row=0, column=1, padx=(0, 10))
         motor2Label.grid(row=1, column=1, padx=(0, 10))
@@ -73,9 +75,14 @@ class App(ttk.Frame):
         motor2Scale.grid(row=1, column=2)
         motor3Scale.grid(row=2, column=2)
 
+        # Bind
+        motor1Scale.configure(command=lambda newValue : self.directMotor(newValue, 1))
+        motor2Scale.configure(command=lambda newValue : self.directMotor(newValue, 2))
+        motor3Scale.configure(command=lambda newValue : self.directMotor(newValue, 3))
+
     def inverseFrameInit(self):
         self.inverseFrame = ttk.Frame(self.notebook, padding=(0,20,0,0))
-        armlistInverse = tkinter.Listbox(self.inverseFrame, height=6, listvariable=self.legsVar)
+        self.armlistInverse = tkinter.Listbox(self.inverseFrame, height=6, listvariable=self.legsVar, selectmode="extended")
 
         xInverseLabel = ttk.Label(self.inverseFrame, text="X :")
         yInverseLabel = ttk.Label(self.inverseFrame, text="Y :")
@@ -85,7 +92,7 @@ class App(ttk.Frame):
         yInverseScale = ttk.Scale(self.inverseFrame, orient="horizontal", length=300, from_=1.0, to=100.0)
         zInverseScale = ttk.Scale(self.inverseFrame, orient="horizontal", length=300, from_=1.0, to=100.0)
 
-        armlistInverse.grid(row=0, column=0, rowspan=3, padx=(0, 10))
+        self.armlistInverse.grid(row=0, column=0, rowspan=3, padx=(0, 10))
 
         xInverseLabel.grid(row=0, column=1, padx=(0, 10))
         yInverseLabel.grid(row=1, column=1, padx=(0, 10))
@@ -95,9 +102,14 @@ class App(ttk.Frame):
         yInverseScale.grid(row=1, column=2)
         zInverseScale.grid(row=2, column=2)
 
+        # Bind
+        xInverseScale.configure(command=lambda newValue : self.inverseCoords(newValue, "x"))
+        yInverseScale.configure(command=lambda newValue : self.inverseCoords(newValue, "y"))
+        zInverseScale.configure(command=lambda newValue : self.inverseCoords(newValue, "z"))
+
     def triangleFrameInit(self):
         self.triangleFrame = ttk.Frame(self.notebook, padding=(0,20,0,0))
-        armlistTriangle = tkinter.Listbox(self.triangleFrame, height=6, listvariable=self.legsVar)
+        self.armlistTriangle = tkinter.Listbox(self.triangleFrame, height=6, listvariable=self.legsVar, selectmode="extended")
 
         xTriangleLabel = ttk.Label(self.triangleFrame, text="X :")
         zTriangleLabel = ttk.Label(self.triangleFrame, text="Z :")
@@ -111,7 +123,7 @@ class App(ttk.Frame):
 
         startStopTriangleButton = ttk.Button(self.triangleFrame, text="Start/Stop")
 
-        armlistTriangle.grid(row=0, column=0, rowspan=3, padx=(0, 10))
+        self.armlistTriangle.grid(row=0, column=0, rowspan=3, padx=(0, 10))
 
         xTriangleLabel.grid(row=0, column=1, padx=(0, 10))
         zTriangleLabel.grid(row=1, column=1, padx=(0, 10))
@@ -124,6 +136,13 @@ class App(ttk.Frame):
         heightTriangleScale.grid(row=0, column=4, sticky='w', rowspan=3)
 
         startStopTriangleButton.grid(row=3, column=2, columnspan=5, pady=20)
+
+        # Bind
+        startStopTriangleButton.configure(command=self.toggleLoop)
+        xTriangleScale.configure(command=lambda newValue : self.triangleParams(newValue, "x"))
+        zTriangleScale.configure(command=lambda newValue : self.triangleParams(newValue, "z"))
+        widthTriangleScale.configure(command=lambda newValue : self.triangleParams(newValue, "width"))
+        heightTriangleScale.configure(command=lambda newValue : self.triangleParams(newValue, "height"))
 
     def walkFrameInit(self):
         # Init
@@ -182,4 +201,42 @@ class App(ttk.Frame):
         transfer_queue.put(message)
 
     def walkDirection(self, dir):
+        message["mode"] = "walk"
         message["data"]["direction"] = dir
+
+    def directMotor(self, value, motor):
+        leg_indexes = self.armlistDirect.curselection()
+        legs = []
+        for i in leg_indexes:
+            legs.append(self.legs[i])
+        message["mode"] = "direct"
+        message["data"]["motor{}".format(motor)] = value
+        message["data"]["legs"] = legs
+        message["loop"] = False
+        transfer_queue.put(message)
+    
+    def inverseCoords(self, value, coord):
+        leg_indexes = self.armlistInverse.curselection()
+        legs = []
+        for i in leg_indexes:
+            legs.append(self.legs[i])
+        message["mode"] = "inverse"
+        message["data"][coord] = value
+        message["data"]["legs"] = legs
+        message["loop"] = False
+        transfer_queue.put(message)
+
+    def triangleParams(self, value, param):
+        leg_indexes = self.armlistTriangle.curselection()
+        legs = []
+        for i in leg_indexes:
+            legs.append(self.legs[i])
+        message["mode"] = "triangle"
+        message["data"][param] = value
+        message["data"]["legs"] = legs
+
+    def emptyMessage(self, event):
+        print("tab changed")
+        message["mode"] = "empty"
+        message["loop"] = False
+        message["data"] = {}
