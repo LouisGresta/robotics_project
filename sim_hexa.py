@@ -8,6 +8,7 @@ import pybullet as p
 from onshape_to_robot.simulation import Simulation
 import kinematics
 from utils import printVerbose
+from constants import LEG_ANGLES
 
 # from squaternion import Quaternion
 from scipy.spatial.transform import Rotation
@@ -229,22 +230,22 @@ while True:
 
             if "rf" in key :
                 alphas = kinematics.triangle_synchro(x, z, h, w, sim.t + duration/2, duration, 
-                                                     leg_index=0, theta_add=dir_angle)
+                                                     leg_index=0, theta_add= LEG_ANGLES[1])
             if "lf" in key:
                 alphas = kinematics.triangle_synchro(x, z, h, w, sim.t, duration, 
-                                                     leg_index=1, theta_add=dir_angle)
+                                                     leg_index=1, theta_add= LEG_ANGLES[0])
             if "lm" in key:
                 alphas = kinematics.triangle_synchro(x, z, h, w, sim.t + duration/2, duration, 
-                                                     leg_index=2, theta_add=dir_angle)
+                                                     leg_index=2, theta_add= LEG_ANGLES[5])
             if "lr" in key:
                 alphas = kinematics.triangle_synchro(x, z, h, w, sim.t, duration, 
-                                                     leg_index=3, theta_add=dir_angle)
+                                                     leg_index=3, theta_add= LEG_ANGLES[4])
             if "rr" in key:
                 alphas = kinematics.triangle_synchro(x, z, h, w, sim.t + duration/2, duration, 
-                                                     leg_index=4, theta_add=dir_angle)
+                                                     leg_index=4, theta_add= LEG_ANGLES[3])
             if "rm" in key:
                 alphas = kinematics.triangle_synchro(x, z, h, w, sim.t, duration, 
-                                                     leg_index=5, theta_add=dir_angle)
+                                                     leg_index=5, theta_add= LEG_ANGLES[2])
             
             if "c1" in key:
                 targets[key] = alphas[0]
@@ -261,29 +262,30 @@ while True:
         z = 0.05
         h = 0.05
         w = 0.125
+        
         duration = p.readUserDebugParameter(controls["duration"])
         dir_angle = p.readUserDebugParameter(controls["dir_angle"])
 
         for key in targets.keys():
 
             if "rf" in key :
-                alphas = kinematics.triangle_synchro(x, z, h, w, sim.t + duration/2, duration, 
-                                                     leg_index=0, theta_add=-math.pi / 4)
+                alphas = kinematics.triangle_synchro_turn(x, z, h, w, sim.t + duration/2, duration, 
+                                                     leg_index=0, theta_add=LEG_ANGLES[1])
             if "lf" in key:
-                alphas = kinematics.triangle_synchro(x, z, h, w, sim.t, duration, 
-                                                     leg_index=1, theta_add=math.pi / 4)
+                alphas = kinematics.triangle_synchro_turn(x, z, h, w, sim.t, duration, 
+                                                     leg_index=1, theta_add=LEG_ANGLES[0])
             if "lm" in key:
-                alphas = kinematics.triangle_synchro(x, z, h, w, sim.t + duration/2, duration, 
-                                                     leg_index=2, theta_add=math.pi / 2)
+                alphas = kinematics.triangle_synchro_turn(x, z, h, w, sim.t + duration/2, duration, 
+                                                     leg_index=2, theta_add=LEG_ANGLES[5])
             if "lr" in key:
-                alphas = kinematics.triangle_synchro(x, z, h, w, sim.t, duration, 
-                                                     leg_index=3, theta_add=3 * math.pi / 4)
+                alphas = kinematics.triangle_synchro_turn(x, z, h, w, sim.t, duration, 
+                                                     leg_index=3, theta_add=LEG_ANGLES[4])
             if "rr" in key:
-                alphas = kinematics.triangle_synchro(x, z, h, w, sim.t + duration/2, duration, 
-                                                     leg_index=4, theta_add=-math.pi / 2)
+                alphas = kinematics.triangle_synchro_turn(x, z, h, w, sim.t + duration/2, duration, 
+                                                     leg_index=4, theta_add=LEG_ANGLES[3])
             if "rm" in key:
-                alphas = kinematics.triangle_synchro(x, z, h, w, sim.t, duration, 
-                                                     leg_index=5, theta_add=-3 * math.pi / 4)
+                alphas = kinematics.triangle_synchro_turn(x, z, h, w, sim.t, duration, 
+                                                     leg_index=5, theta_add=LEG_ANGLES[2])
 
             if "c1" in key:
                 targets[key] = alphas[0]

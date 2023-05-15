@@ -120,6 +120,17 @@ def circle(x, z, r, t, duration):
 
     return computeIK(x, y, z)
 
+def half_circle(x, z, r, t, duration):
+    # x, z : position du centre du cercle
+    # r : rayon du cercle
+    # t : temps de simulation (en secondes)
+    # duration : temps (en secondes) pour faire un cercle
+    angle = (t*(pi/2)/duration)
+    x = r*cos(angle)
+    y = y + r*sin(angle)
+
+    return computeIK(x, y, z)
+
 def triangle(x, z, h, w, t, duration = 3, leg_index=True, VERBOSE=False):
     # x, z : position du centre du segment de la hauteur du triangle
     # (centre du triangle)
@@ -179,6 +190,35 @@ def triangle_synchro(x, z, h, w, t, duration = 3, leg_index=True, theta_add=0, V
                 pt_a[0], pt_a[1], pt_a[2],
                 t-(duration_width+duration_hyp), duration_hyp, 
                 leg_index, theta_add)
+    
+def triangle_synchro_turn(x, z, h, w, t, duration = 3, leg_index=True, theta_add=0, VERBOSE=False):
+    # x, z : position du centre du segment de la hauteur du triangle
+    # (centre du triangle)
+    # h : hauteur du triangle
+    # w : largeur du triangle
+    # t : temps de simulation (en secondes)
+    # duration : temps (en secondes) pour tracer le triangle
+    duration_hyp = duration/4
+    duration_width = duration/2
+    t %= duration
+    pt_a, pt_b, pt_c = triangle_points(x, z, h, w)
+    if VERBOSE :
+        print("points : a= {}, b= {}, c= {}".format(pt_a, pt_b, pt_c))
+    if t < duration_width :
+        return segment(pt_a[0], pt_a[1], pt_a[2],
+                pt_c[0], pt_c[1], pt_c[2],
+                t, duration_width, 
+                leg_index, theta_add)
+    elif t < (duration_width + duration_hyp) :
+        return segment(pt_c[0], pt_c[1], pt_c[2],
+                pt_b[0], pt_b[1], pt_b[2],
+                t-duration_width, duration_hyp, 
+                leg_index, theta_add)
+    else :
+        return segment2(pt_b[0], pt_b[1], pt_b[2],
+                pt_a[0], pt_a[1], pt_a[2],
+                t-(duration_width+duration_hyp), duration_hyp, 
+                leg_index, theta_add)
 
 def triangle_points(x, z, h, w):
     pt_a = (x, 0-w/2, z-h/2)
@@ -193,12 +233,39 @@ def segment(seg_x1, seg_y1, seg_z1,
         t %= duration
     elif t >= duration :
         return computeIKOriented(seg_x2, seg_y2, seg_z2, leg_index=leg_index, theta_add=theta_add)
-    
     x = (t/duration) * (seg_x2 - seg_x1) + seg_x1
     y = (t/duration) * (seg_y2 - seg_y1) + seg_y1
     z = (t/duration) * (seg_z2 - seg_z1) + seg_z1
+    return computeIKOriented(x, y, z, leg_index=leg_index, theta_add=theta_add)
+
+
+
+
+
+
+
+def segment2(x1, y1, z1,
+            x2, y2, z2,
+            t, duration, leg_index=True, theta_add=0, loop = False):
+    if t >= duration :
+        return computeIKOriented(x2, y2, z2, leg_index=leg_index, theta_add=theta_add)
+    delta_a = atan2(x1, y1)
+    delta_c = atan2(x2, y2)
+
+    #r = ? et d = ?
+    theta = (t/duration) * (delta_c - delta_a) + delta_a
+    x = r * math.sin(theta) - d
+    y = r * -math.cos(theta)
+    #z reste un segment
+    z = (t/duration) * (z2 - z1) + z1
 
     return computeIKOriented(x, y, z, leg_index=leg_index, theta_add=theta_add)
+
+
+
+
+
+
 
 def rotation_2D(x, y, z, theta) :
     x_rot = x*cos(theta) - y*sin(theta)
