@@ -202,17 +202,15 @@ class App(ttk.Frame):
 
     def walkDirection(self, dir):
         message["mode"] = "walk"
-        message["data"]["direction"] = dir
+        message["direction"] = dir
 
     def directMotor(self, value, motor):
         leg_indexes = self.armlistDirect.curselection()
         legs = []
         for i in leg_indexes:
             legs.append(self.legs[i])
-        message["mode"] = "direct"
-        message["data"]["motor{}".format(motor)] = value
-        message["data"]["legs"] = legs
-        message["loop"] = False
+        message["motors"]["motor{}".format(motor)] = value
+        message["legs"] = legs
         transfer_queue.put(message)
     
     def inverseCoords(self, value, coord):
@@ -220,10 +218,8 @@ class App(ttk.Frame):
         legs = []
         for i in leg_indexes:
             legs.append(self.legs[i])
-        message["mode"] = "inverse"
-        message["data"][coord] = value
-        message["data"]["legs"] = legs
-        message["loop"] = False
+        message["coords"][coord] = value
+        message["legs"] = legs
         transfer_queue.put(message)
 
     def triangleParams(self, value, param):
@@ -231,9 +227,8 @@ class App(ttk.Frame):
         legs = []
         for i in leg_indexes:
             legs.append(self.legs[i])
-        message["mode"] = "triangle"
-        message["data"][param] = value
-        message["data"]["legs"] = legs
+        message["params"][param] = value
+        message["legs"] = legs
 
     def initMessage(self, event):
         print("tab changed")
