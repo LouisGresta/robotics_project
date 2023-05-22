@@ -2,7 +2,7 @@ from app import App, transfer_queue
 import threading
 import time
 
-start_time = time.time_ns()
+start_time = time.time()
 
 
 dictLegs = {
@@ -36,7 +36,7 @@ def robot_exec():
         if not message["loop"]:
             print("wait until loop starts")
             message = transfer_queue.get()
-        current_time = time.time_ns() - start_time
+        current_time = time.time() - start_time
 
         if message is None:
             print("got None, exiting...")
