@@ -4,12 +4,30 @@ import queue
 import math
 transfer_queue = queue.Queue(1) # max_size=1, we pass data one by one
 
-message = {}
-transfer_queue.put(message)
+MIN_X = -0.4
+MIN_Y = -0.4
+MIN_Z = -0.4
+
+MAX_X = 0.4
+MAX_Y = 0.4
+MAX_Z = 0.4
+
+MIN_MOTOR1 = -math.pi
+MIN_MOTOR2 = -math.pi
+MIN_MOTOR3 = -math.pi
+
+MAX_MOTOR1 = math.pi
+MAX_MOTOR2 = math.pi
+MAX_MOTOR3 = math.pi
 
 class App(ttk.Frame):
     def __init__(self, master=None):
         super().__init__(master)
+
+        self.message = {
+            "loop":False
+        }
+        transfer_queue.put(self.message)
 
         self.legs = ['Leg_1', 'Leg_2', 'Leg_3',
                      'Leg_4', 'Leg_5', 'Leg_6']
@@ -26,15 +44,14 @@ class App(ttk.Frame):
         self.triangleFrameInit()
         # Walk Mode
         self.walkFrameInit()
+        # BOdyMove Mode
+        self.bodyMoveFrameInit()
 
         # WIP
-        bodyMoveFrame = ttk.Frame(self.notebook)
         rotationFrame = ttk.Frame(self.notebook)
 
-        bodyMoveLabel = ttk.Label(bodyMoveFrame, text="body move mode (WIP)")
         rotationLabel = ttk.Label(rotationFrame, text="rotation mode (WIP)")
 
-        bodyMoveLabel.pack(padx=5, pady= 5)
         rotationLabel.pack(padx=5, pady= 5)
 
         # Add frames
@@ -42,7 +59,7 @@ class App(ttk.Frame):
         self.notebook.add(self.inverseFrame, text="Inverse Mode")
         self.notebook.add(self.triangleFrame, text="Triangle Mode")
         self.notebook.add(self.walkFrame, text="Walk Mode")
-        self.notebook.add(bodyMoveFrame, text="Body Move Mode (WIP)")
+        self.notebook.add(self.bodyMoveFrame, text="Body Move Mode")
         self.notebook.add(rotationFrame, text="Rotation Mode (WIP)")
         
         self.notebook.pack()
@@ -57,9 +74,9 @@ class App(ttk.Frame):
         motor2Label = ttk.Label(self.directFrame, text="Motor 2 :")
         motor3Label = ttk.Label(self.directFrame, text="Motor 3 :")
         
-        motor1Scale = ttk.Scale(self.directFrame, orient="horizontal", length=300, from_=1.0, to=100.0)
-        motor2Scale = ttk.Scale(self.directFrame, orient="horizontal", length=300, from_=1.0, to=100.0)
-        motor3Scale = ttk.Scale(self.directFrame, orient="horizontal", length=300, from_=1.0, to=100.0)
+        motor1Scale = ttk.Scale(self.directFrame, orient="horizontal", length=300, from_=MIN_MOTOR1, to=MAX_MOTOR1)
+        motor2Scale = ttk.Scale(self.directFrame, orient="horizontal", length=300, from_=MIN_MOTOR2, to=MAX_MOTOR2)
+        motor3Scale = ttk.Scale(self.directFrame, orient="horizontal", length=300, from_=MIN_MOTOR3, to=MAX_MOTOR3)
 
         self.armlistDirect.grid(row=0, column=0, rowspan=3, padx=(0, 10))
 
@@ -84,9 +101,9 @@ class App(ttk.Frame):
         yInverseLabel = ttk.Label(self.inverseFrame, text="Y :")
         zInverseLabel = ttk.Label(self.inverseFrame, text="Z :")
         
-        xInverseScale = ttk.Scale(self.inverseFrame, orient="horizontal", length=300, from_=1.0, to=100.0)
-        yInverseScale = ttk.Scale(self.inverseFrame, orient="horizontal", length=300, from_=1.0, to=100.0)
-        zInverseScale = ttk.Scale(self.inverseFrame, orient="horizontal", length=300, from_=1.0, to=100.0)
+        xInverseScale = ttk.Scale(self.inverseFrame, orient="horizontal", length=300, from_=MIN_X, to=MAX_X)
+        yInverseScale = ttk.Scale(self.inverseFrame, orient="horizontal", length=300, from_=MIN_Y, to=MAX_Y)
+        zInverseScale = ttk.Scale(self.inverseFrame, orient="horizontal", length=300, from_=MIN_Z, to=MAX_Z)
 
         self.armlistInverse.grid(row=0, column=0, rowspan=3, padx=(0, 10))
 
@@ -112,8 +129,8 @@ class App(ttk.Frame):
         widthTriangleLabel = ttk.Label(self.triangleFrame, text="Width :")
         heightTriangleLabel = ttk.Label(self.triangleFrame, text="Height :")
         
-        xTriangleScale = ttk.Scale(self.triangleFrame, orient="horizontal", length=200, from_=1.0, to=100.0)
-        zTriangleScale = ttk.Scale(self.triangleFrame, orient="horizontal", length=200, from_=1.0, to=100.0)
+        xTriangleScale = ttk.Scale(self.triangleFrame, orient="horizontal", length=200, from_=MIN_X, to=MAX_X)
+        zTriangleScale = ttk.Scale(self.triangleFrame, orient="horizontal", length=200, from_=MIN_Y, to=MAX_Y)
         widthTriangleScale = ttk.Scale(self.triangleFrame, orient="horizontal", length=200, from_=1.0, to=100.0)
         heightTriangleScale = ttk.Scale(self.triangleFrame, orient="vertical", length=100, from_=1.0, to=100.0)
 
@@ -189,61 +206,93 @@ class App(ttk.Frame):
         nordWestButton.configure(command=lambda : self.walkDirection(math.pi/4))
         directionScale.configure(command=self.walkDirection)
 
+    def bodyMoveFrameInit(self):
+        self.bodyMoveFrame = ttk.Frame(self.notebook, padding=(0,20,0,0))
+
+        xBodyMoveLabel = ttk.Label(self.bodyMoveFrame, text="X :")
+        yBodyMoveLabel = ttk.Label(self.bodyMoveFrame, text="Y :")
+        zBodyMoveLabel = ttk.Label(self.bodyMoveFrame, text="Z :")
+        
+        xBodyMoveScale = ttk.Scale(self.bodyMoveFrame, orient="horizontal", length=300, from_=MIN_X, to=MIN_X)
+        yBodyMoveScale = ttk.Scale(self.bodyMoveFrame, orient="horizontal", length=300, from_=MIN_Y, to=MAX_Y)
+        zBodyMoveScale = ttk.Scale(self.bodyMoveFrame, orient="horizontal", length=300, from_=MIN_Z, to=MAX_Z)
+
+        xBodyMoveLabel.grid(row=0, column=1, padx=(0, 10))
+        yBodyMoveLabel.grid(row=1, column=1, padx=(0, 10))
+        zBodyMoveLabel.grid(row=2, column=1, padx=(0, 10))
+
+        xBodyMoveScale.grid(row=0, column=2)
+        yBodyMoveScale.grid(row=1, column=2)
+        zBodyMoveScale.grid(row=2, column=2)
+
+        # Bind
+        xBodyMoveScale.configure(command=lambda newValue : self.bodyMoveCoords(newValue, "x"))
+        yBodyMoveScale.configure(command=lambda newValue : self.bodyMoveCoords(newValue, "y"))
+        zBodyMoveScale.configure(command=lambda newValue : self.bodyMoveCoords(newValue, "z"))
+
     def toggleLoop(self):
-        if message["loop"]:
-            message["loop"] = False
+        if self.message["loop"]:
+            self.message["loop"] = False
         else:
-            message["loop"] = True
-        transfer_queue.put(message)
+            self.message["loop"] = True
+        transfer_queue.put(self.message)
 
     def walkDirection(self, dir):
-        message["mode"] = "walk"
-        message["direction"] = dir
+        self.message["mode"] = "walk"
+        self.message["direction"] = dir
 
     def directMotor(self, value, motor):
         leg_indexes = self.armlistDirect.curselection()
         legs = []
         for i in leg_indexes:
             legs.append(self.legs[i])
-        message["motors"]["motor{}".format(motor)] = value
-        message["legs"] = legs
-        transfer_queue.put(message)
+        self.message["motors"]["motor{}".format(motor)] = value
+        self.message["legs"] = legs
+        transfer_queue.put(self.message)
     
     def inverseCoords(self, value, coord):
         leg_indexes = self.armlistInverse.curselection()
         legs = []
         for i in leg_indexes:
             legs.append(self.legs[i])
-        message["coords"][coord] = value
-        message["legs"] = legs
-        transfer_queue.put(message)
+        self.message["coords"][coord] = value
+        self.message["legs"] = legs
+        transfer_queue.put(self.message)
 
     def triangleParams(self, value, param):
         leg_indexes = self.armlistTriangle.curselection()
         legs = []
         for i in leg_indexes:
             legs.append(self.legs[i])
-        message["params"][param] = value
-        message["legs"] = legs
+        self.message["params"][param] = value
+        self.message["legs"] = legs
+
+    def bodyMoveCoords(self, value, coord):
+        self.message["coords"][coord] = value
+        transfer_queue.put(self.message)
 
     def initMessage(self, event):
         print("tab changed")
         selectedTab = self.notebook.select()
         print(selectedTab)
-        message["loop"] = False
+        self.message = {}
+        self.message["loop"] = False
         if selectedTab == ".!app.!notebook.!frame":
-            message["mode"] = "direct"
-            message["motors"] = {'motor1': 0, 'motor2': 0, 'motor3': 0}
-            message["legs"] = [] 
+            self.message["mode"] = "direct"
+            self.message["motors"] = {'motor1': 0, 'motor2': 0, 'motor3': 0}
+            self.message["legs"] = [] 
         elif selectedTab == ".!app.!notebook.!frame2":
-            message["mode"] = "inverse"
-            message["coords"] = {'x': 0, 'y': 0, 'z': 0}
-            message["legs"] = [] 
+            self.message["mode"] = "inverse"
+            self.message["coords"] = {'x': 0, 'y': 0, 'z': 0}
+            self.message["legs"] = [] 
         elif selectedTab == ".!app.!notebook.!frame3":
-            message["mode"] = "triangle"
-            message["params"] = {'x': 0, 'z': 0, 'width': 0, 'height': 0}
-            message["legs"] = [] 
+            self.message["mode"] = "triangle"
+            self.message["params"] = {'x': 0, 'z': 0, 'width': 0, 'height': 0}
+            self.message["legs"] = [] 
         elif selectedTab == ".!app.!notebook.!frame4":
-            message["mode"] = "walk"
-            message["direction"] = 0
-        print(message)
+            self.message["mode"] = "walk"
+            self.message["direction"] = 0
+        elif selectedTab == ".!app.!notebook.!frame5":
+            self.message["mode"] = "bodyMove"
+            self.message["coords"] = {'x': 0, 'y': 0, 'z': 0}
+        print(self.message)
