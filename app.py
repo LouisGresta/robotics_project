@@ -60,9 +60,9 @@ class App(ttk.Frame):
         motor2Label = ttk.Label(self.directFrame, text="Motor 2 :")
         motor3Label = ttk.Label(self.directFrame, text="Motor 3 :")
         
-        motor1Scale = ttk.Scale(self.directFrame, orient="horizontal", length=300, from_=MIN_MOTOR1, to=MAX_MOTOR1)
-        motor2Scale = ttk.Scale(self.directFrame, orient="horizontal", length=300, from_=MIN_MOTOR2, to=MAX_MOTOR2)
-        motor3Scale = ttk.Scale(self.directFrame, orient="horizontal", length=300, from_=MIN_MOTOR3, to=MAX_MOTOR3)
+        motor1Scale = ttk.Scale(self.directFrame, orient="horizontal", length=300, from_=MIN_MOTOR1, to=MAX_MOTOR1, value=0)
+        motor2Scale = ttk.Scale(self.directFrame, orient="horizontal", length=300, from_=MIN_MOTOR2, to=MAX_MOTOR2, value=0)
+        motor3Scale = ttk.Scale(self.directFrame, orient="horizontal", length=300, from_=MIN_MOTOR3, to=MAX_MOTOR3, value=0)
 
         self.armlistDirect.grid(row=0, column=0, rowspan=3, padx=(0, 10))
 
@@ -87,9 +87,9 @@ class App(ttk.Frame):
         yInverseLabel = ttk.Label(self.inverseFrame, text="Y :")
         zInverseLabel = ttk.Label(self.inverseFrame, text="Z :")
         
-        xInverseScale = ttk.Scale(self.inverseFrame, orient="horizontal", length=300, from_=MIN_X, to=MAX_X)
-        yInverseScale = ttk.Scale(self.inverseFrame, orient="horizontal", length=300, from_=MIN_Y, to=MAX_Y)
-        zInverseScale = ttk.Scale(self.inverseFrame, orient="horizontal", length=300, from_=MIN_Z, to=MAX_Z)
+        xInverseScale = ttk.Scale(self.inverseFrame, orient="horizontal", length=300, from_=MIN_X, to=MAX_X, value=LEG_X_OFFSET)
+        yInverseScale = ttk.Scale(self.inverseFrame, orient="horizontal", length=300, from_=MIN_Y, to=MAX_Y, value=LEG_Y_OFFSET)
+        zInverseScale = ttk.Scale(self.inverseFrame, orient="horizontal", length=300, from_=MIN_Z, to=MAX_Z, value=LEG_Z_OFFSET)
 
         self.armlistInverse.grid(row=0, column=0, rowspan=3, padx=(0, 10))
 
@@ -115,10 +115,10 @@ class App(ttk.Frame):
         widthTriangleLabel = ttk.Label(self.triangleFrame, text="Width :")
         heightTriangleLabel = ttk.Label(self.triangleFrame, text="Height :")
         
-        xTriangleScale = ttk.Scale(self.triangleFrame, orient="horizontal", length=200, from_=MIN_X_TRIANGLE, to=MAX_X_TRIANGLE)
-        zTriangleScale = ttk.Scale(self.triangleFrame, orient="horizontal", length=200, from_=MIN_Z_TRIANGLE, to=MAX_Z_TRIANGLE)
-        widthTriangleScale = ttk.Scale(self.triangleFrame, orient="horizontal", length=200, from_=MIN_WIDTH, to=MAX_WIDTH)
-        heightTriangleScale = ttk.Scale(self.triangleFrame, orient="vertical", length=100, from_=MIN_HEIGHT, to=MAX_HEIGHT)
+        xTriangleScale = ttk.Scale(self.triangleFrame, orient="horizontal", length=200, from_=MIN_X_TRIANGLE, to=MAX_X_TRIANGLE, value=LEG_X_OFFSET)
+        zTriangleScale = ttk.Scale(self.triangleFrame, orient="horizontal", length=200, from_=MIN_Z_TRIANGLE, to=MAX_Z_TRIANGLE, value=0)
+        widthTriangleScale = ttk.Scale(self.triangleFrame, orient="horizontal", length=200, from_=MIN_WIDTH, to=MAX_WIDTH, value=0.2)
+        heightTriangleScale = ttk.Scale(self.triangleFrame, orient="vertical", length=100, from_=MIN_HEIGHT, to=MAX_HEIGHT, value=0.1)
 
         startStopTriangleButton = ttk.Button(self.triangleFrame, text="Start/Stop")
 
@@ -199,9 +199,9 @@ class App(ttk.Frame):
         yBodyMoveLabel = ttk.Label(self.bodyMoveFrame, text="Y :")
         zBodyMoveLabel = ttk.Label(self.bodyMoveFrame, text="Z :")
         
-        xBodyMoveScale = ttk.Scale(self.bodyMoveFrame, orient="horizontal", length=300, from_=MIN_X, to=MAX_X)
-        yBodyMoveScale = ttk.Scale(self.bodyMoveFrame, orient="horizontal", length=300, from_=MIN_Y, to=MAX_Y)
-        zBodyMoveScale = ttk.Scale(self.bodyMoveFrame, orient="horizontal", length=300, from_=MIN_Z, to=MAX_Z)
+        xBodyMoveScale = ttk.Scale(self.bodyMoveFrame, orient="horizontal", length=300, from_=MIN_X, to=MAX_X, value=0)
+        yBodyMoveScale = ttk.Scale(self.bodyMoveFrame, orient="horizontal", length=300, from_=MIN_Y, to=MAX_Y, value=0)
+        zBodyMoveScale = ttk.Scale(self.bodyMoveFrame, orient="horizontal", length=300, from_=MIN_Z, to=MAX_Z, value=0)
 
         xBodyMoveLabel.grid(row=0, column=1, padx=(0, 10))
         yBodyMoveLabel.grid(row=1, column=1, padx=(0, 10))
@@ -268,11 +268,11 @@ class App(ttk.Frame):
             self.message["legs"] = [] 
         elif selectedTab == ".!app.!notebook.!frame2":
             self.message["mode"] = "inverse"
-            self.message["coords"] = {'x': 0.0, 'y': 0.0, 'z': 0.0}
+            self.message["coords"] = {'x': LEG_X_OFFSET, 'y': LEG_Y_OFFSET, 'z': LEG_Z_OFFSET}
             self.message["legs"] = [] 
         elif selectedTab == ".!app.!notebook.!frame3":
             self.message["mode"] = "triangle"
-            self.message["params"] = {'x': 0.1, 'z': 0.0, 'width': 0.2, 'height': 0.1}
+            self.message["params"] = {'x': LEG_X_OFFSET, 'z': 0.0, 'width': 0.2, 'height': 0.1}
             self.message["legs"] = [] 
         elif selectedTab == ".!app.!notebook.!frame4":
             self.message["mode"] = "walk"
