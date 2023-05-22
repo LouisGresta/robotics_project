@@ -242,6 +242,7 @@ class App(ttk.Frame):
         for i in leg_indexes:
             legs.append(self.legs[i])
         self.message["coords"][coord] = float(value)
+        print(self.message["coords"][coord])
         self.message["legs"] = legs
         transfer_queue.put(self.message)
 
