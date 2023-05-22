@@ -8,7 +8,6 @@ start_time = time.time()
 
 def robot_exec():
     message = transfer_queue.get()
-
     while True:
         if not message["loop"]:
             print("wait until loop starts")
@@ -23,8 +22,6 @@ def robot_exec():
         print(targets)
         # envoie targets au robot
         
-
-
 # create the application
 app = App()
 
