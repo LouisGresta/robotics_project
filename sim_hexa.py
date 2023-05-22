@@ -195,6 +195,9 @@ while True:
         p.resetBasePositionAndOrientation(
             cross, T, to_pybullet_quaternion(0, 0, leg_angle)
         )
+
+
+
     elif args.mode == "triangle-oriented":
         x = p.readUserDebugParameter(controls["triangle_x"])
         z = p.readUserDebugParameter(controls["triangle_z"])
@@ -218,7 +221,46 @@ while True:
         T[1] += leg_center_pos[1]
         T[2] += leg_center_pos[2]
         sim.addDebugPosition(T, duration=3)
+
     elif args.mode == "walk":
+        x = 0
+        z = 0.05
+        h = 0.05
+        w = 0.125
+        duration = p.readUserDebugParameter(controls["duration"])
+        dir_angle = p.readUserDebugParameter(controls["dir_angle"])
+
+        for key in targets.keys():
+
+            if "rf" in key :
+                alphas = kinematics.triangle_synchro(x, z, h, w, sim.t + duration/2, duration, 
+                                                     leg_index=0, theta_add= dir_angle)
+            if "lf" in key:
+                alphas = kinematics.triangle_synchro(x, z, h, w, sim.t, duration, 
+                                                     leg_index=1, theta_add= dir_angle)
+            if "lm" in key:
+                alphas = kinematics.triangle_synchro(x, z, h, w, sim.t + duration/2, duration, 
+                                                     leg_index=2, theta_add= dir_angle)
+            if "lr" in key:
+                alphas = kinematics.triangle_synchro(x, z, h, w, sim.t, duration, 
+                                                     leg_index=3, theta_add= dir_angle)
+            if "rr" in key:
+                alphas = kinematics.triangle_synchro(x, z, h, w, sim.t + duration/2, duration, 
+                                                     leg_index=4, theta_add= dir_angle)
+            if "rm" in key:
+                alphas = kinematics.triangle_synchro(x, z, h, w, sim.t, duration, 
+                                                     leg_index=5, theta_add= dir_angle)
+            
+            if "c1" in key:
+                targets[key] = alphas[0]
+            if "thigh" in key:
+                targets[key] = alphas[1]
+            if "tibia" in key:
+                targets[key] = alphas[2]
+
+        state = sim.setJoints(targets)
+
+    elif args.mode == "turnV1":
         x = 0
         z = 0.05
         h = 0.05
@@ -247,46 +289,6 @@ while True:
                 alphas = kinematics.triangle_synchro(x, z, h, w, sim.t, duration, 
                                                      leg_index=5, theta_add= LEG_ANGLES[2])
             
-            if "c1" in key:
-                targets[key] = alphas[0]
-            if "thigh" in key:
-                targets[key] = alphas[1]
-            if "tibia" in key:
-                targets[key] = alphas[2]
-
-        state = sim.setJoints(targets)
-
-    elif args.mode == "turnV1":
-
-        x = 0
-        z = 0.05
-        h = 0.05
-        w = 0.125
-        
-        duration = p.readUserDebugParameter(controls["duration"])
-        dir_angle = p.readUserDebugParameter(controls["dir_angle"])
-
-        for key in targets.keys():
-
-            if "rf" in key :
-                alphas = kinematics.triangle_synchro_turn(x, z, h, w, sim.t + duration/2, duration, 
-                                                     leg_index=0, theta_add=LEG_ANGLES[1])
-            if "lf" in key:
-                alphas = kinematics.triangle_synchro_turn(x, z, h, w, sim.t, duration, 
-                                                     leg_index=1, theta_add=LEG_ANGLES[0])
-            if "lm" in key:
-                alphas = kinematics.triangle_synchro_turn(x, z, h, w, sim.t + duration/2, duration, 
-                                                     leg_index=2, theta_add=LEG_ANGLES[5])
-            if "lr" in key:
-                alphas = kinematics.triangle_synchro_turn(x, z, h, w, sim.t, duration, 
-                                                     leg_index=3, theta_add=LEG_ANGLES[4])
-            if "rr" in key:
-                alphas = kinematics.triangle_synchro_turn(x, z, h, w, sim.t + duration/2, duration, 
-                                                     leg_index=4, theta_add=LEG_ANGLES[3])
-            if "rm" in key:
-                alphas = kinematics.triangle_synchro_turn(x, z, h, w, sim.t, duration, 
-                                                     leg_index=5, theta_add=LEG_ANGLES[2])
-
             if "c1" in key:
                 targets[key] = alphas[0]
             if "thigh" in key:

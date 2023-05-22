@@ -251,8 +251,13 @@ def segment2(x1, y1, z1,
         return computeIKOriented(x2, y2, z2, leg_index=leg_index, theta_add=theta_add)
     delta_a = atan2(x1, y1)
     delta_c = atan2(x2, y2)
+    
+    x=LEG_CENTER_POS[leg_index][0]
+    y=LEG_CENTER_POS[leg_index][1]
+    #mtn pythagore
+    d=sqrt(x^2 + y^2)
+    r=sqrt(x1^2 + y2^2)
 
-    #r = ? et d = ?
     theta = (t/duration) * (delta_c - delta_a) + delta_a
     x = r * math.sin(theta) - d
     y = r * -math.cos(theta)
