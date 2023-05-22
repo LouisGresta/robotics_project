@@ -1,5 +1,6 @@
 from app import App, transfer_queue
 from utils import computeMessage, dictLegs
+from math import degrees
 
 import threading
 import time
@@ -62,11 +63,16 @@ def robot_exec():
         #print(targets)
         for leg in targets:
             id_leg = dictLegs[leg]
-            theta1 = targets[leg][0]
-            theta2 = targets[leg][1]
-            theta3 = targets[leg][2]
+            theta1 = degrees(targets[leg][0])
+            theta2 = degrees(targets[leg][1])
+            theta3 = degrees(targets[leg][2])
             setLegPosition(id_leg, theta1, theta2, theta3)
+            motor1 = dxl_io.get_present_position([id_leg*10 + 1])
+            motor2 = dxl_io.get_present_position([id_leg*10 + 2])
+            motor3 = dxl_io.get_present_position([id_leg*10 + 3])
+            print(f"Motor1 {motor1}, motor2 {motor2}, motor3 {motor3}")
         # envoie targets au robot
+        time.sleep(0.1)
         
 # create the application
 app = App()
