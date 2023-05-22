@@ -32,7 +32,7 @@ def computeMessage(message, time):
         x = message["coords"]["x"]
         y = message["coords"]["y"]
         z = message["coords"]["z"]
-        print(x, y, z)
+        
         alphas = kinematics.computeIK(x, y, z, use_rads=True)
         for leg in message["legs"]:
             targets[leg] = alphas
