@@ -272,9 +272,8 @@ class App(ttk.Frame):
         transfer_queue.put(self.message)
 
     def initMessage(self, event):
-        print("tab changed")
+        print("mode changed")
         selectedTab = self.notebook.select()
-        print(selectedTab)
         self.message = {}
         self.message["loop"] = False
         if selectedTab == ".!app.!notebook.!frame":
