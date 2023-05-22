@@ -81,6 +81,10 @@ elif args.mode == "triangle-oriented":
 elif args.mode == "walk":
     controls["duration"] = p.addUserDebugParameter("duration", 0.01, 10, 0.5)
     controls["dir_angle"] = p.addUserDebugParameter("dir_angle", -math.pi, math.pi, 0)
+elif args.mode == "body_move":
+    controls["target_x"] = p.addUserDebugParameter("target_x", -0.4, 0.4, 0)
+    controls["target_y"] = p.addUserDebugParameter("target_y", -0.4, 0.4, 0)
+    controls["target_z"] = p.addUserDebugParameter("target_z", -0.4, 0.4, 0)
 elif args.mode == "turnV1":
     controls["duration"] = p.addUserDebugParameter("duration", 0.01, 10, 0.5)
     controls["dir_angle"] = p.addUserDebugParameter("dir_angle", -math.pi, math.pi, 180)
@@ -260,6 +264,34 @@ while True:
 
         state = sim.setJoints(targets)
 
+    elif args.mode == "body_move":
+        x = p.readUserDebugParameter(controls["target_x"])
+        y = p.readUserDebugParameter(controls["target_y"])
+        z = p.readUserDebugParameter(controls["target_z"])
+
+        for key in targets.keys():
+
+            if "rf" in key :
+                alphas = kinematics.computeIKOriented(x, y, z, leg_index=0, use_rads=True)
+            if "lf" in key:
+                alphas = kinematics.computeIKOriented(x, y, z, leg_index=1, use_rads=True)
+            if "lm" in key:
+                alphas = kinematics.computeIKOriented(x, y, z, leg_index=2, use_rads=True)
+            if "lr" in key:
+                alphas = kinematics.computeIKOriented(x, y, z, leg_index=3, use_rads=True)
+            if "rr" in key:
+                alphas = kinematics.computeIKOriented(x, y, z, leg_index=4, use_rads=True)
+            if "rm" in key:
+                alphas = kinematics.computeIKOriented(x, y, z, leg_index=5, use_rads=True)
+            
+            if "c1" in key:
+                targets[key] = alphas[0]
+            if "thigh" in key:
+                targets[key] = alphas[1]
+            if "tibia" in key:
+                targets[key] = alphas[2]
+
+        state = sim.setJoints(targets)
     elif args.mode == "turnV1":
         x = 0
         z = 0.05
