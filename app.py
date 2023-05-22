@@ -239,14 +239,14 @@ class App(ttk.Frame):
 
     def walkDirection(self, dir):
         self.message["mode"] = "walk"
-        self.message["direction"] = dir
+        self.message["direction"] = float(dir)
 
     def directMotor(self, value, motor):
         leg_indexes = self.armlistDirect.curselection()
         legs = []
         for i in leg_indexes:
             legs.append(self.legs[i])
-        self.message["motors"]["motor{}".format(motor)] = value
+        self.message["motors"]["motor{}".format(motor)] = float(value)
         self.message["legs"] = legs
         transfer_queue.put(self.message)
     
@@ -255,7 +255,7 @@ class App(ttk.Frame):
         legs = []
         for i in leg_indexes:
             legs.append(self.legs[i])
-        self.message["coords"][coord] = value
+        self.message["coords"][coord] = float(value)
         self.message["legs"] = legs
         transfer_queue.put(self.message)
 
@@ -264,11 +264,11 @@ class App(ttk.Frame):
         legs = []
         for i in leg_indexes:
             legs.append(self.legs[i])
-        self.message["params"][param] = value
+        self.message["params"][param] = float(value)
         self.message["legs"] = legs
 
     def bodyMoveCoords(self, value, coord):
-        self.message["coords"][coord] = value
+        self.message["coords"][coord] = float(value)
         transfer_queue.put(self.message)
 
     def initMessage(self, event):
