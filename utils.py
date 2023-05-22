@@ -1,7 +1,92 @@
 from kinematics import computeIKOriented, computeIK, computeDKDetailed, computeDK, rotation_2D
 from constants import *
 import time
+import kinematics
 
+dictLegs = {
+    'Leg_1':1,
+    'Leg_2':2,
+    'Leg_3':3,
+    'Leg_4':4,
+    'Leg_5':5,
+    'Leg_6':6
+}
+
+def computeMessage(message, time):
+    targets = {}
+    for legId in dictLegs.values():
+        targets[f"motor{legId}1"] = 0
+        targets[f"motor{legId}2"] = 0
+        targets[f"motor{legId}3"] = 0
+
+    if message["mode"] == "direct":
+            for leg in message["legs"]:
+                targets[f"motor{dictLegs[leg]}1"] = message["motors"]["motor1"]
+                targets[f"motor{dictLegs[leg]}2"] = message["motors"]["motor2"]
+                targets[f"motor{dictLegs[leg]}3"] = message["motors"]["motor3"]
+
+    elif message["mode"] == "inverse":
+        x = message["coords"]["x"]
+        y = message["coords"]["y"]
+        z = message["coords"]["z"]
+        alphas = kinematics.computeIK(x, y, z, use_rads=True)
+        for leg in message["legs"]:
+            targets[f"motor{dictLegs[leg]}1"] = alphas[0]
+            targets[f"motor{dictLegs[leg]}2"] = alphas[1]
+            targets[f"motor{dictLegs[leg]}3"] = alphas[2]
+
+    elif message["mode"] == "triangle":
+        x = message["params"]["x"]
+        z = message["params"]["z"]
+        h = message["params"]["height"]
+        w = message["params"]["width"]
+        duration = 3
+        alphas = kinematics.triangle(x, z, h, w, time, duration)
+
+        for leg in message["legs"]:
+            targets[f"motor{dictLegs[leg]}1"] = alphas[0]
+            targets[f"motor{dictLegs[leg]}2"] = alphas[1]
+            targets[f"motor{dictLegs[leg]}3"] = alphas[2]
+
+    elif message["mode"] == "walk":
+        x = 0
+        z = 0.05
+        h = 0.05
+        w = 0.125
+        duration = 3
+        dir_angle = message["direction"]
+
+        for legId in dictLegs.values():
+
+            if legId%2 != 0 :
+                alphas = kinematics.triangle_synchro(x, z, h, w, time + duration/2, duration, 
+                                                    leg_index=legId-1, theta_add=dir_angle)
+            else:
+                alphas = kinematics.triangle_synchro(x, z, h, w, time + duration, duration, 
+                                                    leg_index=legId-1, theta_add=dir_angle)
+            
+            targets[f"motor{legId}1"] = alphas[0]
+            targets[f"motor{legId}2"] = alphas[1]
+            targets[f"motor{legId}3"] = alphas[2]
+
+    elif message["mode"] == "body_move":
+        x = message["coords"]["x"]
+        y = message["coords"]["y"]
+        z = message["coords"]["z"]
+
+        for legId in dictLegs.values():
+            
+            alphas = kinematics.computeIKOriented(x, y, z, leg_index=legId-1, use_rads=True)
+            
+            targets[f"motor{legId}1"] = alphas[0]
+            targets[f"motor{legId}2"] = alphas[1]
+            targets[f"motor{legId}3"] = alphas[2]
+
+    return targets
+
+def printVerbose(s, verbose = False):
+    if verbose :
+        print(s)
 
 class Parameters:
     def __init__(
@@ -555,7 +640,3 @@ def allMotorsToPresentPosition(robot):
     for m in robot.motors:
         print("Setting motor {} to angle {}".format(m.id, m.present_position))
         m.goal_position = m.present_position
-
-def printVerbose(s, verbose = False):
-    if verbose :
-        print(s)

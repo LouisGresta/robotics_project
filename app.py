@@ -213,7 +213,7 @@ class App(ttk.Frame):
         yBodyMoveLabel = ttk.Label(self.bodyMoveFrame, text="Y :")
         zBodyMoveLabel = ttk.Label(self.bodyMoveFrame, text="Z :")
         
-        xBodyMoveScale = ttk.Scale(self.bodyMoveFrame, orient="horizontal", length=300, from_=MIN_X, to=MIN_X)
+        xBodyMoveScale = ttk.Scale(self.bodyMoveFrame, orient="horizontal", length=300, from_=MIN_X, to=MAX_X)
         yBodyMoveScale = ttk.Scale(self.bodyMoveFrame, orient="horizontal", length=300, from_=MIN_Y, to=MAX_Y)
         zBodyMoveScale = ttk.Scale(self.bodyMoveFrame, orient="horizontal", length=300, from_=MIN_Z, to=MAX_Z)
 
