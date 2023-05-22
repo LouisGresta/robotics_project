@@ -6,8 +6,8 @@ import time
 import argparse
 import pybullet as p
 from onshape_to_robot.simulation import Simulation
-import utils.kinematics as kinematics
-from utils.verbose_func import printVerbose
+import kinematics 
+from utils import printVerbose
 
 # from squaternion import Quaternion
 from scipy.spatial.transform import Rotation
