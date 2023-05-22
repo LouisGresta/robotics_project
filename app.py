@@ -2,23 +2,9 @@ import tkinter.ttk as ttk
 import tkinter
 import queue
 import math
+from constants import *
 transfer_queue = queue.Queue(1) # max_size=1, we pass data one by one
 
-MIN_X = -0.4
-MIN_Y = -0.4
-MIN_Z = -0.4
-
-MAX_X = 0.4
-MAX_Y = 0.4
-MAX_Z = 0.4
-
-MIN_MOTOR1 = -math.pi
-MIN_MOTOR2 = -math.pi
-MIN_MOTOR3 = -math.pi
-
-MAX_MOTOR1 = math.pi
-MAX_MOTOR2 = math.pi
-MAX_MOTOR3 = math.pi
 
 class App(ttk.Frame):
     def __init__(self, master=None):
@@ -129,10 +115,10 @@ class App(ttk.Frame):
         widthTriangleLabel = ttk.Label(self.triangleFrame, text="Width :")
         heightTriangleLabel = ttk.Label(self.triangleFrame, text="Height :")
         
-        xTriangleScale = ttk.Scale(self.triangleFrame, orient="horizontal", length=200, from_=MIN_X, to=MAX_X)
-        zTriangleScale = ttk.Scale(self.triangleFrame, orient="horizontal", length=200, from_=MIN_Y, to=MAX_Y)
-        widthTriangleScale = ttk.Scale(self.triangleFrame, orient="horizontal", length=200, from_=1.0, to=100.0)
-        heightTriangleScale = ttk.Scale(self.triangleFrame, orient="vertical", length=100, from_=1.0, to=100.0)
+        xTriangleScale = ttk.Scale(self.triangleFrame, orient="horizontal", length=200, from_=MIN_X_TRIANGLE, to=MAX_X_TRIANGLE)
+        zTriangleScale = ttk.Scale(self.triangleFrame, orient="horizontal", length=200, from_=MIN_Z_TRIANGLE, to=MAX_Z_TRIANGLE)
+        widthTriangleScale = ttk.Scale(self.triangleFrame, orient="horizontal", length=200, from_=MIN_WIDTH, to=MAX_WIDTH)
+        heightTriangleScale = ttk.Scale(self.triangleFrame, orient="vertical", length=100, from_=MIN_HEIGHT, to=MAX_HEIGHT)
 
         startStopTriangleButton = ttk.Button(self.triangleFrame, text="Start/Stop")
 
@@ -278,20 +264,20 @@ class App(ttk.Frame):
         self.message["loop"] = False
         if selectedTab == ".!app.!notebook.!frame":
             self.message["mode"] = "direct"
-            self.message["motors"] = {'motor1': 0, 'motor2': 0, 'motor3': 0}
+            self.message["motors"] = {'motor1': 0.0, 'motor2': 0.0, 'motor3': 0.0}
             self.message["legs"] = [] 
         elif selectedTab == ".!app.!notebook.!frame2":
             self.message["mode"] = "inverse"
-            self.message["coords"] = {'x': 0, 'y': 0, 'z': 0}
+            self.message["coords"] = {'x': 0.0, 'y': 0.0, 'z': 0.0}
             self.message["legs"] = [] 
         elif selectedTab == ".!app.!notebook.!frame3":
             self.message["mode"] = "triangle"
-            self.message["params"] = {'x': 0, 'z': 0, 'width': 0, 'height': 0}
+            self.message["params"] = {'x': 0.1, 'z': 0.0, 'width': 0.2, 'height': 0.1}
             self.message["legs"] = [] 
         elif selectedTab == ".!app.!notebook.!frame4":
             self.message["mode"] = "walk"
-            self.message["direction"] = 0
+            self.message["direction"] = 0.0
         elif selectedTab == ".!app.!notebook.!frame5":
             self.message["mode"] = "bodyMove"
-            self.message["coords"] = {'x': 0, 'y': 0, 'z': 0}
+            self.message["coords"] = {'x': 0.0, 'y': 0.0, 'z': 0.0}
         print(self.message)

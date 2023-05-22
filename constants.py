@@ -21,6 +21,33 @@ USE_MM_INPUT = False
 USE_MM_OUTPUT = False
 LIST_OF_INVERTED_IDS = []
 
+# App cap values
+MIN_X = -0.4
+MIN_Y = -0.4
+MIN_Z = -0.4
+
+MAX_X = 0.4
+MAX_Y = 0.4
+MAX_Z = 0.4
+
+MIN_MOTOR1 = -math.pi
+MIN_MOTOR2 = -math.pi
+MIN_MOTOR3 = -math.pi
+
+MAX_MOTOR1 = math.pi
+MAX_MOTOR2 = math.pi
+MAX_MOTOR3 = math.pi
+
+MIN_HEIGHT = 0.01
+MIN_WIDTH = 0.01
+MIN_X_TRIANGLE = 0.01
+MIN_Z_TRIANGLE = -0.2
+
+MAX_HEIGHT = 0.3
+MAX_WIDTH = 0.3
+MAX_X_TRIANGLE = 0.8
+MAX_Z_TRIANGLE = 0.3
+
 if ROBOT_TYPE == PHANTOMX:
     constL1 = 0.001 * 54.8
     constL2 = 0.001 * 65.3
