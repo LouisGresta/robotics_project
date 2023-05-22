@@ -1,9 +1,49 @@
 from app import App, transfer_queue
+from utils import computeMessage, dictLegs
+
 import threading
 import time
-from utils import computeMessage
+import pypot.dynamixel
+
+
+ports = pypot.dynamixel.get_available_ports()
+
+dxl_io = pypot.dynamixel.DxlIO(ports[0], baudrate=1000000)
+
+list_ids = dxl_io.scan()
+print(list_ids)
+
 
 start_time = time.time()
+
+
+#------------------------#
+#----- LEGS CONTROL -----#
+#------------------------#
+def setLegPosition(id_leg, theta1, theta2, theta3):
+    if not verifConnexionLeg(id_leg):
+        return False
+    dxl_io.set_goal_position({(id_leg*10+1):theta1,
+                              (id_leg*10+2):theta2,
+                              (id_leg*10+3):theta3})
+    return True
+    
+def setMotorPosition(id_motor, theta):
+    if not verifConnexionMotor(id_motor):
+        return False
+    dxl_io.set_goal_position({id_motor:theta})
+    return True
+
+def verifConnexionLeg(id_leg):
+    return verifConnexionMotor(id_leg*10 + 1) and verifConnexionMotor(id_leg*10 + 2) and verifConnexionMotor(id_leg*10 + 3)
+
+def verifConnexionMotor(id_motor):
+    for id in list_ids:
+        if( id == id_motor ):
+            return True
+    return False
+
+#------------------------#
 
 
 def robot_exec():
@@ -19,7 +59,13 @@ def robot_exec():
             return
         #print("doing something with", message)
         targets = computeMessage(message, current_time)
-        print(targets)
+        #print(targets)
+        for leg in targets:
+            id_leg = dictLegs[leg]
+            theta1 = targets[leg][0]
+            theta2 = targets[leg][1]
+            theta3 = targets[leg][2]
+            setLegPosition(id_leg, theta1, theta2, theta3)
         # envoie targets au robot
         
 # create the application
